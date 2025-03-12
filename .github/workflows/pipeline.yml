@@ -1,4 +1,4 @@
-name: Lint
+name: CI w/ Go Linting
 
 on:
   push:
@@ -9,31 +9,54 @@ on:
       - main
 
 jobs:
-  golangci:
-    name: Go Lint
+  go-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
           go-version: '1.21'
+
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
 
-  eslint:
-    name: JavaScript Lint
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
+
       - name: Install dependencies
         run: npm install
         working-directory: fullstack-open-part11-pokedex
-      - name: Run ESLint
-        run: npx eslint .
+
+      - name: Build project
+        run: npm run build
+        working-directory: fullstack-open-part11-pokedex
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: fullstack-open-part11-pokedex
+
+      - name: Run e2e tests
+        run: npm run test:e2e
         working-directory: fullstack-open-part11-pokedex
