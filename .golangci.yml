@@ -1,0 +1,12 @@
+linters:
+  enable:
+    - gofmt
+    - govet
+  disable:
+    - errcheck
+
+issues:
+  exclude-rules:
+    - linters:
+        - forbidigo
+      text: "fmt.Println"
