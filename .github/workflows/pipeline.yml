@@ -22,10 +22,6 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
-        env:
-          # This helps resolve potential permission or path issues
-          GOROOT: /go
-          GOPATH: /go
 
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
