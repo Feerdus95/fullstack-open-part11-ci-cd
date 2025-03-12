@@ -55,8 +55,13 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: fullstack-open-part11-pokedex
-
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      
+      - name: Build
+        run: npm run build
+      
       - name: Run e2e tests
         run: npm run test:e2e
         working-directory: fullstack-open-part11-pokedex
