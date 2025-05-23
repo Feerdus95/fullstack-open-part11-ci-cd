@@ -31,7 +31,8 @@ RUN apk --no-cache add curl
 
 # Copy built artifacts
 COPY --from=backend-builder /app/server .
-COPY --from=frontend-builder /app/frontend/build ./static
+# Copy the built React app from the dist directory
+COPY --from=frontend-builder /app/frontend/dist ./static
 
 # Set environment variables
 ENV PORT=10000
