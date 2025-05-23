@@ -1,0 +1,49 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          cd fullstack-open-part11-pokedex
+          npm ci
+      
+      - name: Run tests
+        run: |
+          cd fullstack-open-part11-pokedex
+          npm test
+      
+      - name: Build application
+        run: |
+          cd fullstack-open-part11-pokedex
+          npm run build
+          cd ..
+          cd cmd/app
+          go build -o ../../app
+      
+      - name: Deploy to Render
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: jakejarvis/render-deploy@v1.3.1
+        with:
+          serviceId: ${{ secrets.RENDER_SERVICE_ID }}
+          apiKey: ${{ secrets.RENDER_API_KEY }}
