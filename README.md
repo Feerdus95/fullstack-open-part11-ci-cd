@@ -93,6 +93,27 @@ This repository contains the implementation of a CI/CD pipeline for the Pokedex 
 - Required pull request reviews
 - Required status checks to pass before merging
 
+### Exercise 11.18: Build Notifications
+- Set up Discord webhook notifications
+- Configured success/failure notifications for deployments
+- Added detailed error information for failed builds
+
+## Upcoming Exercises
+
+### Exercise 11.19: Periodic Health Check
+- [ ] Set up scheduled health checks
+- [ ] Configure alerts for service downtime
+
+### Exercise 11.20: Your Own Pipeline
+- [ ] Select an application to containerize
+- [ ] Set up CI/CD pipeline
+- [ ] Configure automated testing and deployment
+
+### Exercise 11.21: Protected Main Branch with Required Reviews
+- [ ] Enable branch protection
+- [ ] Require pull request reviews
+- [ ] Enforce status checks before merging
+
 ## Local Development
 
 ### Prerequisites
@@ -160,6 +181,11 @@ The project uses GitHub Actions with two main workflows:
 - Version tagging with semantic versioning
 - Branch protection and PR verification
 - Skip deployment with `#skip` in commit message
+
+### 3. Notification Workflow ([notifications.yml](.github/workflows/notifications.yml))
+- Discord notifications for build status
+- Success/failure alerts with detailed information
+- Real-time updates on deployment status
 
 ## Live Application
 

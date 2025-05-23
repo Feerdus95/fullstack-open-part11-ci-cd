@@ -1,0 +1,77 @@
+name: Discord Notifications
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Render"]
+    types:
+      - completed
+
+jobs:
+  notify:
+    name: Notify Discord
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' ||
+      github.event.workflow_run.conclusion == 'failure'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Get Commit Message
+        id: commit_msg
+        run: |
+          echo "message=$(git log -1 --pretty=%B | head -1 | tr -d '\n')" >> $GITHUB_OUTPUT
+          
+      - name: Send Discord Notification
+        run: |
+          # Set status and color based on workflow conclusion
+          if [ "${{ github.event.workflow_run.conclusion }}" = "success" ]; then
+            STATUS="✅ Succeeded"
+            COLOR=3066993  # Green
+          else
+            STATUS="❌ Failed"
+            COLOR=15158332  # Red
+          fi
+          
+          # Create the JSON payload
+          PAYLOAD=$(jq -n \
+            --arg status "$STATUS" \
+            --arg repo "${{ github.repository }}" \
+            --arg workflow "${{ github.workflow }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg commit "${{ github.sha }}" \
+            --arg commit_url "https://github.com/${{ github.repository }}/commit/${{ github.sha }}" \
+            --arg message "$(git log -1 --pretty=%B | head -1 | tr -d '\n')" \
+            --arg run_url "${{ github.event.workflow_run.html_url }}" \
+            --arg color "$COLOR" \
+            '{
+              "username": "GitHub Actions",
+              "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+              "embeds": [{
+                "title": "Deployment \($status)",
+                "color": \($color | tonumber),
+                "fields": [
+                  {"name": "Repository", "value": "\($repo)", "inline": true},
+                  {"name": "Workflow", "value": "\($workflow)", "inline": true},
+                  {"name": "Branch", "value": "\($branch)", "inline": true},
+                  {"name": "Commit", "value": "[\($commit | .[0:8])](\($commit_url))", "inline": false},
+                  {"name": "Message", "value": "\($message)", "inline": false},
+                  {"name": "Status", "value": "\($status)", "inline": false}
+                  \(if ${{ github.event.workflow_run.conclusion == 'failure' }} then
+                    {"name": "Error details", "value": "Check the [workflow run](\($run_url))", "inline": false}
+                  else
+                    {}
+                  end)
+                ],
+                "timestamp": "\(now | todateiso8601)"
+              }]
+            }')
+          
+          # Send the webhook
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            "${{ secrets.DISCORD_WEBHOOK_URL }}"
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        if: env.DISCORD_WEBHOOK_URL != ''
