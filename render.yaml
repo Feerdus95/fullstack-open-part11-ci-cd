@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: pokedex-app
+    env: docker
+    build:
+      dockerfile: Dockerfile
+    envVars:
+      - key: PORT
+        value: 10000
+    autoDeploy: true
