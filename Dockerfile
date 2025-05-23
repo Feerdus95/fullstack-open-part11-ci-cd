@@ -1,9 +1,17 @@
 # Build the React app
 FROM node:16 AS frontend-builder
 WORKDIR /app/frontend
+
+# First copy only package files for better caching
 COPY fullstack-open-part11-pokedex/package*.json ./
-RUN npm ci --only=production
+
+# Install all dependencies including devDependencies for building
+RUN npm ci
+
+# Copy the rest of the application
 COPY fullstack-open-part11-pokedex/ .
+
+# Build the React app
 RUN npm run build
 
 # Build the Go application
