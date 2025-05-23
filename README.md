@@ -1,4 +1,4 @@
-# Fullstack Open Part 11 - CI/CD (Exercises 11.1-11.9)
+﻿# Fullstack Open Part 11 - CI/CD (Exercises 11.1-11.9)
 
 This repository contains the implementation of a CI/CD pipeline for the Pokedex application as part of the Fullstack Open course (Part 11).
 

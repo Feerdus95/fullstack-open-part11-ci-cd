@@ -1,4 +1,4 @@
-# CI/CD for Our Go Backend 🚀
+﻿# CI/CD for Our Go Backend 🚀
 
 So, after building full-stack apps with React and Node.js, diving into a Go backend feels like a fresh challenge. Our hipothetical team of 6 is cooking, so we need a solid CI pipeline.
 

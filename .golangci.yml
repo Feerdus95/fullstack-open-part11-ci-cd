@@ -1,4 +1,4 @@
-linters:
+﻿linters:
   enable:
     - gofmt
     - govet
