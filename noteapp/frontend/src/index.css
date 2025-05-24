@@ -1,0 +1,87 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 322 59% 58%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 322 59% 58%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 270 50% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 322 59% 58%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 270 60% 97%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 270 20% 92%;
+    --sidebar-ring: 322 59% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  .noteapp-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .noteapp-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .noteapp-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-noteapp-primary/40 rounded-full;
+  }
+  
+  .noteapp-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-noteapp-primary/60;
+  }
+
+  /* Card styling classes */
+  .note-card {
+    @apply bg-white rounded-xl border border-noteapp-border shadow-sm hover:shadow-md transition-all duration-200;
+  }
+
+  .note-card-content {
+    @apply bg-gradient-to-br from-white to-noteapp-highlight/20;
+  }
+
+  /* Button glow effect */
+  .btn-glow:hover {
+    @apply shadow-[0_0_15px_rgba(198,100,162,0.5)];
+  }
+}

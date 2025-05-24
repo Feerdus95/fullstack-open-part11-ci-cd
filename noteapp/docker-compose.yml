@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: noteapp
+      POSTGRES_USER: noteuser
+      POSTGRES_PASSWORD: notepass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/noteapp
+      SPRING_DATASOURCE_USERNAME: noteuser
+      SPRING_DATASOURCE_PASSWORD: notepass
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
