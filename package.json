@@ -1,0 +1,21 @@
+{
+  "name": "fullstack-open-part11-ci-cd",
+  "version": "1.0.0",
+  "description": "This repository contains the implementation of a CI/CD pipeline for the Pokedex application as part of the Fullstack Open course (Part 11). The application is deployed to [Render](https://render.com/) with automated deployments from the main branch.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Feerdus95/fullstack-open-part11-ci-cd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Feerdus95/fullstack-open-part11-ci-cd/issues"
+  },
+  "homepage": "https://github.com/Feerdus95/fullstack-open-part11-ci-cd#readme"
+}
