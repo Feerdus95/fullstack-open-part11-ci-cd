@@ -98,11 +98,17 @@ This repository contains the implementation of a CI/CD pipeline for the Pokedex 
 - Configured success/failure notifications for deployments
 - Added detailed error information for failed builds
 
-## Upcoming Exercises
-
 ### Exercise 11.19: Periodic Health Check
-- [ ] Set up scheduled health checks
-- [ ] Configure alerts for service downtime
+- Set up scheduled health checks
+- Checks application health every 6 hours
+- Automatically creates GitHub issues for failures
+- Closes issues when health is restored
+- Configure alerts for service downtime
+- Integrated with GitHub Issues
+- Automatic issue management
+- Configurable health check URL
+
+## Upcoming Exercises
 
 ### Exercise 11.20: Your Own Pipeline
 - [ ] Select an application to containerize
@@ -187,6 +193,12 @@ The project uses GitHub Actions with two main workflows:
 - Success/failure alerts with detailed information
 - Real-time updates on deployment status
 
+### 4. Health Check Workflow ([health-check.yml](.github/workflows/health-check.yml))
+- Scheduled health checks for the deployed application
+- Automatic issue creation for failures
+- Self-healing issue management
+- Configurable check frequency and target URL
+
 ## Live Application
 
 The application is deployed to Render and can be accessed at:
@@ -195,7 +207,39 @@ The application is deployed to Render and can be accessed at:
 ### Health Check
 Health check endpoint: [https://pokedex-app-gmwc.onrender.com/health](https://pokedex-app-gmwc.onrender.com/health)
 
-## Health Check
+## Health Check Configuration
+
+The application includes a comprehensive health check system:
+
+1. **Endpoint Monitoring**
+   - Default URL: `https://pokedex-app-gmwc.onrender.com/health`
+   - Expected response: `200 OK` with `{"status": "ok"}`
+   - Timeout: 10 seconds
+
+2. **Customization**
+   To change the health check URL, add a repository variable:
+   - Go to Repository Settings > Secrets and variables > Actions
+   - Add a new repository variable:
+     - Name: `HEALTH_CHECK_URL`
+     - Value: Your custom health check URL
+
+3. **Monitoring**
+   - Checks run every 6 hours
+   - Creates GitHub issues for failures
+   - Automatically resolves issues when service recovers
+
+4. **Manual Testing**
+   ```bash
+   # Test the health check manually
+   curl -v https://pokedex-app-gmwc.onrender.com/health
+   ```
+
+5. **Troubleshooting**
+   - Check GitHub Actions logs for detailed error information
+   - Review open issues for recurring problems
+   - Verify application logs on Render dashboard
+
+## Health Check Endpoint
 
 The application exposes a health check endpoint that's used for monitoring and zero-downtime deployments:
 

@@ -1,0 +1,100 @@
+name: Health Check
+
+on:
+  schedule:
+    # Runs every 6 hours (UTC)
+    - cron: '0 */6 * * *'
+  # Also allow manual triggers
+  workflow_dispatch:
+
+env:
+  HEALTH_CHECK_URL: ${{ secrets.HEALTH_CHECK_URL }}
+
+jobs:
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check application health
+        id: health_check
+        run: |
+          echo "Checking health at: ${{ env.HEALTH_CHECK_URL }}"
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 10 ${{ env.HEALTH_CHECK_URL }} || echo "CURL_ERROR")
+          
+          if [ "$RESPONSE_CODE" = "200" ]; then
+            echo "✅ Health check passed (Status: $RESPONSE_CODE)"
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Health check failed (Status: $RESPONSE_CODE)"
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "response_code=$RESPONSE_CODE" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v6
+        env:
+          RESPONSE_CODE: ${{ steps.health_check.outputs.response_code || 'UNKNOWN' }}
+          HEALTH_CHECK_URL: ${{ env.HEALTH_CHECK_URL }}
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['health-check-failure'],
+              state: 'open'
+            });
+            
+            if (issues.length > 0) {
+              console.log('Open health check issue already exists');
+              return;
+            }
+            
+            const issueBody = [
+              'The health check for the application failed.',
+              '',
+              '**Details:**',
+              `- **Time:** ${new Date().toISOString()}`,
+              `- **Status Code:** ${process.env.RESPONSE_CODE || 'Unknown'}`,
+              `- **URL:** ${process.env.HEALTH_CHECK_URL}`,
+              '',
+              'Please investigate the issue.'
+            ].join('\n');
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Health Check Failure',
+              body: issueBody,
+              labels: ['bug', 'health-check-failure']
+            });
+
+      - name: Close resolved issues
+        if: success()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['health-check-failure'],
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '✅ Health check has recovered. This issue has been automatically closed.'
+              });
+              
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
