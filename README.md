@@ -16,7 +16,7 @@ This repository contains the implementation of a CI/CD pipeline for the Pokedex 
 - `Dockerfile` - Multi-stage Dockerfile for building the application
 - `build_step.sh` - Build script for the application
 
-## Exercises Implementation
+## Exercises Completed
 
 ### Exercise 11.1: Getting started with GitHub Actions
 - Set up GitHub Actions workflow
@@ -108,17 +108,36 @@ This repository contains the implementation of a CI/CD pipeline for the Pokedex 
 - Automatic issue management
 - Configurable health check URL
 
-## Upcoming Exercises
-
 ### Exercise 11.20: Your Own Pipeline
-- [ ] Select an application to containerize
-- [ ] Set up CI/CD pipeline
-- [ ] Configure automated testing and deployment
+- Selected Notes App for containerization
+- Set up CI/CD pipeline with GitHub Actions
+- Configured automated testing and deployment
+- Backend: Java/Spring Boot with Maven
+- Frontend: React/TypeScript with npm
+- PostgreSQL database for testing
+- Docker containerization
+- Automated deployment to Docker Hub
 
 ### Exercise 11.21: Protected Main Branch with Required Reviews
-- [ ] Enable branch protection
-- [ ] Require pull request reviews
-- [ ] Enforce status checks before merging
+- Enable branch protection
+- Require pull request reviews
+- Enforce status checks before merging
+
+## Projects
+
+### 1. Pokedex App
+- [Documentation](./fullstack-open-part11-pokedex/README.md)
+
+### 2. Notes App
+- [Documentation](./noteapp/README.md)
+- A full-stack note-taking application with React/TypeScript frontend and Spring Boot/Java backend
+- Includes CI/CD pipeline with GitHub Actions
+- Containerized with Docker
+- Automated testing and deployment
+
+## Local Development
+
+Each project has its own setup instructions. Please refer to the respective README files.
 
 ## Local Development
 
