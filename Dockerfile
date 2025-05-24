@@ -30,14 +30,17 @@ COPY --from=builder /app/server .
 RUN mkdir -p static
 
 # Set environment variables
-ENV PORT=10000
+ENV PORT=5000
 ENV NODE_ENV=production
+
+# Add curl for healthcheck and debugging
+RUN apk --no-cache add curl
 
 # Expose port
 EXPOSE $PORT
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s \
+# Health check with retry and better error handling
+HEALTHCHECK --interval=5s --timeout=5s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:$PORT/health || exit 1
 
 # Command to run the application
