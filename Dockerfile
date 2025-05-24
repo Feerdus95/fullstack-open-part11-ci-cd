@@ -26,9 +26,8 @@ RUN apk --no-cache add curl
 # Copy the binary from builder
 COPY --from=builder /app/server .
 
-# Create static directory and copy any static files if they exist
+# Create static directory (no need to copy since we don't have static files yet)
 RUN mkdir -p static
-COPY ./static ./static
 
 # Set environment variables
 ENV PORT=10000
