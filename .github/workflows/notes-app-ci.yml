@@ -90,15 +90,15 @@ jobs:
       - name: Build and push backend
         uses: docker/build-push-action@v4
         with:
-          context: ./noteapp
-          file: Dockerfile.backend
+          context: .
+          file: noteapp/Dockerfile.backend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/notes-backend:latest
 
       - name: Build and push frontend
         uses: docker/build-push-action@v4
         with:
-          context: ./noteapp
-          file: Dockerfile.frontend
+          context: .
+          file: noteapp/Dockerfile.frontend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/notes-frontend:latest
