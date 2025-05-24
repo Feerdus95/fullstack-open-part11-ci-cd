@@ -23,18 +23,30 @@ WORKDIR /app
 # Install curl for healthcheck
 RUN apk --no-cache add curl
 
-# Copy the binary from builder
+# Build the Pokedex app
+FROM node:16 AS pokedex-builder
+WORKDIR /app/pokedex
+COPY fullstack-open-part11-pokedex/package*.json ./
+RUN npm ci
+COPY fullstack-open-part11-pokedex/ .
+RUN npm run build
+
+# Final production image
+FROM alpine:3.18
+WORKDIR /app
+
+# Install curl for healthcheck
+RUN apk --no-cache add curl
+
+# Copy the Go binary
 COPY --from=builder /app/server .
 
-# Create static directory (no need to copy since we don't have static files yet)
-RUN mkdir -p static
+# Copy the built Pokedex app
+COPY --from=pokedex-builder /app/pokedex/dist ./pokedex-dist
 
 # Set environment variables
 ENV PORT=5000
 ENV NODE_ENV=production
-
-# Add curl for healthcheck and debugging
-RUN apk --no-cache add curl
 
 # Expose port
 EXPOSE $PORT

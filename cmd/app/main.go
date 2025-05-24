@@ -14,12 +14,12 @@ func securityHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Add security headers
 		headers := map[string]string{
-			"Content-Security-Policy":   CSPHeader,
-			"X-Content-Type-Options":  "nosniff",
-			"X-Frame-Options":          "DENY",
-			"X-XSS-Protection":         "1; mode=block",
-			"Referrer-Policy":          "strict-origin-when-cross-origin",
-			"Permissions-Policy":       "geolocation=(), microphone=(), camera=()",
+			"Content-Security-Policy":    CSPHeader,
+			"X-Content-Type-Options":     "nosniff",
+			"X-Frame-Options":            "DENY",
+			"X-XSS-Protection":           "1; mode=block",
+			"Referrer-Policy":            "strict-origin-when-cross-origin",
+			"Permissions-Policy":         "geolocation=(), microphone=(), camera=()",
 			"Cross-Origin-Opener-Policy": "same-origin",
 		}
 
@@ -55,13 +55,30 @@ func main() {
 	// Create a new ServeMux
 	mux := http.NewServeMux()
 
-	// Serve static files from the static directory
-	fs := http.FileServer(http.Dir("./static"))
+	// Serve the Pokedex app
+	// First try the development location, then the production location
+	pokedexDirs := []string{
+		"../fullstack-open-part11-pokedex/dist", // Development
+		"./pokedex-dist",                        // Production (Docker)
+	}
+
+	var fs http.Handler
+	for _, dir := range pokedexDirs {
+		if _, err := os.Stat(dir); err == nil {
+			fs = http.FileServer(http.Dir(dir))
+			log.Printf("Serving Pokedex app from %s", dir)
+			break
+		}
+	}
+
+	if fs == nil {
+		log.Fatal("Could not find Pokedex app. Please build the Pokedex app first.")
+	}
+
 	mux.Handle("/", fs)
 
 	// Health check endpoint
 	mux.HandleFunc("/health", healthHandler)
-
 
 	// Create the server with all middleware
 	server := &http.Server{
