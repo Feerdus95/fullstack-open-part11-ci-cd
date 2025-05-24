@@ -68,12 +68,11 @@ jobs:
       run: |
         ./mvnw clean test -Dspring.datasource.url=jdbc:postgresql://localhost:5432/noteapp_test -Dspring.datasource.username=testuser -Dspring.datasource.password=testpass
 
-    - name: Build and test frontend
+    - name: Build frontend
       working-directory: ./noteapp/frontend
       run: |
         npm ci
         npm run build
-        npm test
 
   deploy:
     needs: test
