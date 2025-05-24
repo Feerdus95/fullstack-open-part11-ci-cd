@@ -57,6 +57,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
+    - name: Set up Maven Wrapper for backend
+      working-directory: ./noteapp/backend
+      run: |
+        mvn -N io.takari:maven:wrapper -Dmaven=3.8.6
+        chmod +x mvnw
+
     - name: Build and test backend
       working-directory: ./noteapp/backend
       run: |
