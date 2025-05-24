@@ -1,25 +1,19 @@
-# Build the React app
-FROM node:16 AS frontend-builder
-WORKDIR /app/frontend
+# Build the Go application
+FROM golang:1.21 AS builder
+WORKDIR /app
 
-# First copy only package files for better caching
-COPY fullstack-open-part11-pokedex/package*.json ./
+# Copy go mod files first for better caching
+COPY go.mod .
+COPY go.sum .
 
-# Install all dependencies including devDependencies for building
-RUN npm ci
+# Download dependencies
+RUN go mod download
 
 # Copy the rest of the application
-COPY fullstack-open-part11-pokedex/ .
-
-# Build the React app
-RUN npm run build
-
-# Build the Go application
-FROM golang:1.21 AS backend-builder
-WORKDIR /app
-COPY go.mod .
-RUN go mod download
 COPY . .
+
+
+# Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/app
 
 # Final production image
@@ -29,10 +23,12 @@ WORKDIR /app
 # Install curl for healthcheck
 RUN apk --no-cache add curl
 
-# Copy built artifacts
-COPY --from=backend-builder /app/server .
-# Copy the built React app from the dist directory
-COPY --from=frontend-builder /app/frontend/dist ./static
+# Copy the binary from builder
+COPY --from=builder /app/server .
+
+# Create static directory and copy any static files if they exist
+RUN mkdir -p static
+COPY ./static ./static
 
 # Set environment variables
 ENV PORT=10000
